@@ -1,0 +1,23 @@
+{
+  "name": "eventshuffle",
+  "version": "0.1.0",
+  "description": "Event scheduling service API",
+  "main": "src/index.js",
+  "scripts": {
+    "test": "mocha **/*.test.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/jluukka-ge/eventshuffle.git"
+  },
+  "keywords": [
+    "event",
+    "scheduling"
+  ],
+  "author": "Joel Luukka",
+  "license": "UNLICENCED",
+  "bugs": {
+    "url": "https://github.com/jluukka-ge/eventshuffle/issues"
+  },
+  "homepage": "https://github.com/jluukka-ge/eventshuffle#readme"
+}
