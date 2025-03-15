@@ -1,6 +1,9 @@
 # Use root/example as user/password credentials
 version: '3.1'
 
+include:
+  - ./src/services/persistent-storage/mongodb/docker-compose.yaml
+
 services:
   eventshuffle-api:
     image: node:23-alpine
@@ -8,3 +11,8 @@ services:
     volumes:
       - ./:/home/node
     command: ["node", "./src/index.js"]
+    environment:
+      - MONGODB_CONN_STR=mongodb://${MONGO_ROOT_USER}:${MONGO_ROOT_PASSWORD}@mongo
+      - MONGODB_DATABASE=${MONGODB_DATABASE}
+    depends_on:
+      - mongo

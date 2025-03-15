@@ -19,5 +19,8 @@
   "bugs": {
     "url": "https://github.com/jluukka-ge/eventshuffle/issues"
   },
-  "homepage": "https://github.com/jluukka-ge/eventshuffle#readme"
+  "homepage": "https://github.com/jluukka-ge/eventshuffle#readme",
+  "dependencies": {
+    "mongodb": "^6.14.2"
+  }
 }
