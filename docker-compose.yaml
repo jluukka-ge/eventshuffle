@@ -11,8 +11,11 @@ services:
     volumes:
       - ./:/home/node
     command: ["node", "./src/index.js"]
+    ports:
+      - ${PORT}:${PORT}
     environment:
       - MONGODB_CONN_STR=mongodb://${MONGO_ROOT_USER}:${MONGO_ROOT_PASSWORD}@mongo
       - MONGODB_DATABASE=${MONGODB_DATABASE}
+      - PORT=${PORT}
     depends_on:
       - mongo
