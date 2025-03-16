@@ -4,7 +4,8 @@
   "description": "Event scheduling service API",
   "main": "src/index.js",
   "scripts": {
-    "test": "mocha **/*.test.js"
+    "test": "mocha **/*.test.js",
+    "test:integration": "dotenvx run -- mocha **/*.test.integration.js"
   },
   "repository": {
     "type": "git",
@@ -22,5 +23,10 @@
   "homepage": "https://github.com/jluukka-ge/eventshuffle#readme",
   "dependencies": {
     "mongodb": "^6.14.2"
+  },
+  "devDependencies": {
+    "@dotenvx/dotenvx": "^1.38.5",
+    "chai": "^5.2.0",
+    "mocha": "^11.1.0"
   }
 }

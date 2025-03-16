@@ -1,86 +1,60 @@
-const { MongoClient } = require('mongodb');
+const { configureMongoDB, collections } = require('./mongodb');
 
-
-const replaceOne = async (
-  collection,
-  filter,
-  replacement,
-) => {
-  const result = await collection.replaceOne(filter, replacement, { upsert: true });
-  return {
-    ...result,
-    documentId: result.upsertedId,
+const _createEvent = async (dbOps, eventName, dates) => {
+  const newEvent = {
+    name: eventName,
   };
-}
 
-const insertOne = async (
-  collection,
-  document,
-) => {
-  const result = await collection.insertOne(document);
-  return {
-    ...result,
-    documentId: result.insertedId,
-  };
-}
+  const dateObjects = await Promise.all(
+    dates.map(async (date) => {
+      return {
+        date: date,
+        eventId: newEvent._id,
+      };
+    })
+  );
 
-const upsertOne = async (
-  collection,
-  ...rest
-) => {
-  if (rest.length > 1) {
-    const filter = rest[0];
-    const replacement = rest[1];
-    return replaceOne(collection, filter, replacement);
-  }
-  const replacement = rest[0];
-  return insertOne(collection, replacement);
+  const eventUpsert = dbOps.upsert(collections.EVENT, newEvent);
+  eventUpsert.then(() => {
+    console.log(`Event entry added to DB: ${newEvent._id}`);
+  });
+
+  const dateUpserts = dateObjects.map((newDate) => {
+    const dateUpsert = dbOps.upsert(collections.DATE, newDate);
+    dateUpsert.then(() => {
+      console.log(`Date entry added to DB: ${newDate._id}`);
+    });
+    return dateUpsert;
+  });
+
+  return Promise.all([
+    eventUpsert,
+    ...dateUpserts,
+  ]).then(() => newEvent);
 };
 
+const _findEventById = async (dbOps, id) => {
+  const resultArray = await dbOps.find(collections.EVENT, { _id: { $eq: id } });
 
-const configureMongoDB = (config) => {
-  const {
-    connectionString,
-    database,
-  } = config;
-
-  const _client = new MongoClient(connectionString);
-  const _database = _client.db(database);
-
-  const upsert = async (
-    collectionName,
-    ...rest
-  ) => {
-    if (!collectionName) { return null; }
-
-    const collection = _database.collection(collectionName);
-
-    return upsertOne(collection, ...rest);
-  };
-
-  const find = async (
-    collectionName,
-    filter,
-  ) => {
-    if (!collectionName) { return null; }
-
-    const collection = _database.collection(collectionName);
-
-    return collection.find(filter).toArray();
-  };
-
-  const close = () => {};
-
-  return {
-    upsert,
-    close,
-    find,
-    db: _database,
+  if (resultArray.length > 0) {
+    console.log(`Event entry found from DB with id: ${id}`);
+    return resultArray[0];
   }
+
+  console.log(`Event entry not found from DB with id: ${id}`);
+  return null;
 };
 
-// ------- //
+const configureStorage = (config) => {
+  const dbOps = configureMongoDB(config);
+
+  return {
+    createEvent: (eventName, dates) => _createEvent(dbOps, eventName, dates),
+    findEventById: (id) => _findEventById(dbOps, id),
+    close: dbOps.close,
+  };
+};
 
 module.exports = {
-  configureMongoDB,
+  configureStorage,
 };
