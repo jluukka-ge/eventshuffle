@@ -72,6 +72,14 @@ describe('endpoints', () => {
 
     request(app)
       .post('/api/v1/event')
+      .send({
+        "name": "Jake's secret party",
+        "dates": [
+          "2014-01-01",
+          "2014-01-05",
+          "2014-01-12"
+        ]
+      })
       .end((err, res) => {
         if (err) {
           done(err);

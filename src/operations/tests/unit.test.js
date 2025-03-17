@@ -6,3 +6,8 @@
  * such dependencies simple enough to make mocking easy.
  *
  */
+
+describe('operations', () => {
+  it('calls health check correctly');
+  it('creates an event correctly');
+});
