@@ -15,29 +15,29 @@ const nextEventId = objectIdNextId();
 const nextDateId = objectIdNextId();
 const nextVoteId = objectIdNextId();
 
-const _createEvent = async (db, eventName, dates) => {
+const _createEvent = async (db, eventName) => {
   const newEvent = {
     _id: nextEventId(),
     name: eventName,
   };
 
-  const newDates = dates.map((date) => {
-    return {
-      _id: nextDateId(),
-      date: date,
-      eventId: newEvent._id,
-    };
-  });
-
   db[EVENT_COLLECTION_NAME].push(newEvent);
   console.log(`Event entry added to DB: ${newEvent._id}`);
 
-  newDates.forEach((dateObject) => {
-    db[DATE_COLLECTION_NAME].push(dateObject);
-    console.log(`Date entry added to DB: ${dateObject._id}`);
-  });
-
   return newEvent;
+};
+
+const _createDate = async (db, eventId, date) => {
+  const newDate = {
+    _id: nextDateId(),
+    date: date,
+    eventId: eventId,
+  };
+
+  db[DATE_COLLECTION_NAME].push(newDate);
+  console.log(`Date entry added to DB: ${dateObject._id}`);
+
+  return newDate;
 };
 
 const _listEvents = async (db) => {
@@ -75,7 +75,8 @@ const defineStorage = (config = {}) => {
   };
 
   return {
-    createEvent: (eventName, dates) => _createEvent(db, eventName, dates),
+    createEvent: (eventName) => _createEvent(db, eventName),
+    createDate: (eventId, date) => _createDate(db, eventId, date),
     listEvents: () => _listEvents(db),
     findEventById: (id) => _findEventById(db, id),
     clear: () => _clear(db),

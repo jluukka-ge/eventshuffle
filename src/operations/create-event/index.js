@@ -1,8 +1,15 @@
 const define = ({ persistentStorage }) => {
   return async (eventName, dates) => {
-    const newEvent = await persistentStorage.createEvent(eventName, dates);
+    const newEvent = await persistentStorage.createEvent(eventName);
 
-    return newEvent;
+    const newDates = dates.map(date => {
+      return persistentStorage.createDate(newEvent._id, date)
+    });
+
+    return Promise.all([
+      newEvent,
+      ...newDates,
+    ]).then(() => newEvent);
   };
 };
 

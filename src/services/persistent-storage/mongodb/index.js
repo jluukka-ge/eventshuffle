@@ -5,32 +5,26 @@ const _createEvent = async (dbOps, eventName, dates) => {
     name: eventName,
   };
 
-  const dateObjects = await Promise.all(
-    dates.map(async (date) => {
-      return {
-        date: date,
-        eventId: newEvent._id,
-      };
-    })
-  );
-
   const eventUpsert = dbOps.upsert(collections.EVENT, newEvent);
   eventUpsert.then(() => {
     console.log(`Event entry added to DB: ${newEvent._id}`);
   });
 
-  const dateUpserts = dateObjects.map((newDate) => {
-    const dateUpsert = dbOps.upsert(collections.DATE, newDate);
-    dateUpsert.then(() => {
-      console.log(`Date entry added to DB: ${newDate._id}`);
-    });
-    return dateUpsert;
+  return eventUpsert;
+};
+
+const _createDate = (dbOps, eventId, date) => {
+  const newDate = {
+    date: date,
+    eventId: newEvent._id,
+  };
+
+  const dateUpsert = dbOps.upsert(collections.DATE, newDate);
+  dateUpsert.then(() => {
+    console.log(`Date entry added to DB: ${newDate._id}`);
   });
 
-  return Promise.all([
-    eventUpsert,
-    ...dateUpserts,
-  ]).then(() => newEvent);
+  return dateUpsert;
 };
 
 const _listEvents = async (dbOps) => {
@@ -55,7 +49,8 @@ const defineStorage = (config) => {
   const dbOps = configureMongoDB(config);
 
   return {
-    createEvent: (eventName, dates) => _createEvent(dbOps, eventName, dates),
+    createEvent: (eventName) => _createEvent(dbOps, eventName),
+    createDate: (eventId, date) => _createDate(dbOps, eventId, date),
     listEvents: () => _listEvents(dbOps),
     findEventById: (id) => _findEventById(dbOps, id),
     checkHealth: dbOps.checkHealth,

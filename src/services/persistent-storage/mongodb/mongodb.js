@@ -13,19 +13,19 @@ const replaceOne = async (
 ) => {
   const result = await collection.replaceOne(filter, replacement, { upsert: true });
   return {
-    ...result,
-    documentId: result.upsertedId,
+    ...data,
+    _id: result.upsertedId,
   };
 }
 
 const insertOne = async (
   collection,
-  document,
+  data,
 ) => {
   const result = await collection.insertOne(document);
   return {
-    ...result,
-    documentId: result.insertedId,
+    ...data,
+    _id: result.insertedId,
   };
 }
 
