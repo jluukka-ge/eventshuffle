@@ -8,6 +8,7 @@
  * data types.
  */
 
+const { ObjectId } = require('bson');
 const request = require('supertest');
 const chai = import('chai');
 
@@ -22,8 +23,6 @@ describe('endpoints', () => {
   });
 
   it('health domain operation is called', (done) => {
-    const PORT = 3000;
-
     const testHandler = (() => {
       let isCalled = false;
       const handler = (...rest) => {
@@ -47,11 +46,45 @@ describe('endpoints', () => {
       .get('/api/v1/health')
       .end((err, res) => {
         if (err) {
-          app.
           done(err);
         }
         const isCalled = testHandler.getIsCalled();
         expect(isCalled).to.be.true;
+        done();
+      });
+  });
+
+  it('responds with event ID when creating an event', (done) => {
+    const eventId = new ObjectId().toString();
+
+    const _createEvent = (eventName, dates) => {
+      return {
+        _id: eventId,
+        eventName,
+      };
+    };
+
+    const app = initApi({
+      domainOperations: {
+        createEvent: _createEvent,
+      }
+    });
+
+    request(app)
+      .post('/api/v1/event')
+      .send({
+        "name": "Jake's secret party",
+        "dates": [
+          "2014-01-01",
+          "2014-01-05",
+          "2014-01-12"
+        ]
+      })
+      .end((err, res) => {
+        if (err) {
+          done(err);
+        }
+        expect(res.body).to.deep.equal({ id: eventId });
         done();
       });
   });
