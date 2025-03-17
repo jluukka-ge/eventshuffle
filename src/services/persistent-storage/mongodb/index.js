@@ -45,16 +45,17 @@ const _findEventById = async (dbOps, id) => {
   return null;
 };
 
-const configureStorage = (config) => {
+const defineStorage = (config) => {
   const dbOps = configureMongoDB(config);
 
   return {
     createEvent: (eventName, dates) => _createEvent(dbOps, eventName, dates),
     findEventById: (id) => _findEventById(dbOps, id),
+    checkHealth: dbOps.checkHealth,
     close: dbOps.close,
   };
 };
 
 module.exports = {
-  configureStorage,
+  defineStorage,
 };

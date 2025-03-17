@@ -21,34 +21,37 @@ describe('endpoints', () => {
     expect = _chai.expect;
   });
 
-  it('calls test handler correctly', (done) => {
+  it('health domain operation is called', (done) => {
     const PORT = 3000;
 
     const testHandler = (() => {
-      let params;
-      const handler = (...rest) => { params = rest; };
-      const getParams = () => params;
+      let isCalled = false;
+      const handler = (...rest) => {
+        isCalled = true;
+        return { persistentStorage: true };
+      };
+      const getIsCalled = () => isCalled;
       return {
         handler,
-        getParams,
+        getIsCalled,
       };
     })();
 
     const app = initApi({
-      PORT,
-      testHandler: testHandler.handler,
+      domainOperations: {
+        health: testHandler.handler,
+      }
     });
 
     request(app)
-      .get('/api/v1/event/list')
+      .get('/api/v1/health')
       .end((err, res) => {
         if (err) {
           app.
           done(err);
         }
-        const params = testHandler.getParams();
-        expect(params).to.have.lengthOf(1);
-        expect(params[0]).to.equal('v1');
+        const isCalled = testHandler.getIsCalled();
+        expect(isCalled).to.be.true;
         done();
       });
   });

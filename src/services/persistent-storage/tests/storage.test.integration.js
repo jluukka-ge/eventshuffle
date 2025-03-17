@@ -13,8 +13,8 @@
 
 const chai = import('chai');
 
-const { configureStorage: mongoStorage } = require('../mongodb');
-const { configureStorage: mockStorage } = require('../mock-storage');
+const { defineStorage: mongoStorage } = require('../mongodb');
+const { defineStorage: mockStorage } = require('../mock-storage');
 
 const MONGODB_CONN_STR=`mongodb://${process.env.MONGO_ROOT_USER}:${process.env.MONGO_ROOT_PASSWORD}@localhost`;
 const MONGODB_DATABASE = process.env.MONGODB_DATABASE;
