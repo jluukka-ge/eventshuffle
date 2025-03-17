@@ -1,4 +1,5 @@
 const { define: defineHealth } = require('./health');
+const { define: defineCreateEvent } = require('./create-event');
 
 const define = (config) => {
   const {
@@ -7,5 +8,6 @@ const define = (config) => {
 
   return {
     health: defineHealth({ persistentStorage }),
+    createEvent: defineCreateEvent({ persistentStorage }),
   };
 }
