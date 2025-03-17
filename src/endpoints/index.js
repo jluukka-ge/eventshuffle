@@ -1,20 +1,19 @@
 const express = require('express');
 const bodyParser = require('body-parser');
 
+const health = require('./health');
+
 const initApi = (config) => {
   const {
-    testHandler,
+    domainOperations,
   } = config;
+
   const app = express();
 
   // parse application/json
   app.use(bodyParser.json())
 
-  app.get('/api/:apiVersion/event/list', (req, res) => {
-    const apiVersion = req.params.apiVersion;
-    const result = testHandler(apiVersion);
-    res.json({ result });
-  });
+  health.define(app, domainOperations.health);
 
   return app;
 };

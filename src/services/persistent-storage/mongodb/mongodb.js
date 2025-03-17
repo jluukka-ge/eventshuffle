@@ -76,10 +76,13 @@ const configureMongoDB = (config) => {
 
   const close = () => _client.close();
 
+  const checkHealth = () => _database.stats().then(({ ok }) => ok === 1);
+
   return {
     upsert,
-    close,
     find,
+    close,
+    checkHealth,
     db: _database,
   }
 };

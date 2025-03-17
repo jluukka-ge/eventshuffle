@@ -52,7 +52,12 @@ const _findEventById = async (db, id) => {
   return null;
 };
 
-const configureStorage = () => {
+const defineStorage = (config = {}) => {
+  const {
+    close = () => {},
+    checkHealth = () => Future.resolve(true),
+  } = config;
+
   const db = {
     [EVENT_COLLECTION_NAME]: [],
     [DATE_COLLECTION_NAME]: [],
@@ -62,10 +67,11 @@ const configureStorage = () => {
   return {
     createEvent: (eventName, dates) => _createEvent(db, eventName, dates),
     findEventById: (id) => _findEventById(db, id),
-    close: () => {},
+    close,
+    checkHealth,
   };
 };
 
 module.exports = {
-  configureStorage,
+  defineStorage,
 };
