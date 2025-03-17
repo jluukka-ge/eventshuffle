@@ -33,6 +33,12 @@ const _createEvent = async (dbOps, eventName, dates) => {
   ]).then(() => newEvent);
 };
 
+const _listEvents = async (dbOps) => {
+  const resultArray = await dbOps.find(collections.EVENT);
+  console.log(`Event entries found from DB (count ${resultArray.length})`);
+  return resultArray;
+};
+
 const _findEventById = async (dbOps, id) => {
   const resultArray = await dbOps.find(collections.EVENT, { _id: { $eq: id } });
 
@@ -50,9 +56,11 @@ const defineStorage = (config) => {
 
   return {
     createEvent: (eventName, dates) => _createEvent(dbOps, eventName, dates),
+    listEvents: () => _listEvents(dbOps),
     findEventById: (id) => _findEventById(dbOps, id),
     checkHealth: dbOps.checkHealth,
     close: dbOps.close,
+    clear: dbOps.clear,
   };
 };
 

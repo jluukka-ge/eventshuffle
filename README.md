@@ -10,9 +10,9 @@ __See './scripts' for common development and maintenance actions__
 npm run install
 ```
 
-## Run
+## Run locally
 ```bash
-docker compose up
+./scripts/run-local.sh
 ```
 
 ## Dependencies

@@ -18,7 +18,7 @@ const { defineStorage: mockStorage } = require('../mock-storage');
 
 const MONGODB_CONN_STR=`mongodb://${process.env.MONGO_ROOT_USER}:${process.env.MONGO_ROOT_PASSWORD}@localhost`;
 const MONGODB_DATABASE = process.env.MONGODB_DATABASE;
-
+console.log(MONGODB_DATABASE);
 if (
   !MONGODB_CONN_STR ||
   !MONGODB_DATABASE
@@ -43,6 +43,10 @@ describe('Persistent storage', () => {
 
   after(async () => {
     await mongoOps.close();
+  });
+
+  afterEach(async () => {
+    await mongoOps.clear();
   });
 
   describe('Mock implementation matches MongoDB API', () => {
@@ -78,6 +82,30 @@ describe('Persistent storage', () => {
       ].forEach((fetchedObject) => {
         expect(fetchedObject).to.have.property('_id');
         expect(fetchedObject).to.have.property('name');
+      });
+    });
+
+    it('lists events with a common interface', async () => {
+      const mockOps = mockStorage();
+
+      const createdMongoA = await mongoOps.createEvent('event mongo A', ['2025-03-10', '2025-03-11']);
+      const createdMongoB = await mongoOps.createEvent('event mongo B', ['2025-03-10', '2025-03-11']);
+
+      const createdMockA = await mockOps.createEvent('event mock A', ['2025-03-10', '2025-03-11']);
+      const createdMockB = await mockOps.createEvent('event mock B', ['2025-03-10', '2025-03-11']);
+
+      const listedMongo = await mongoOps.listEvents();
+      const listedMock = await mockOps.listEvents();
+
+      // Test both objects
+      [
+        listedMongo,
+        listedMock,
+      ].forEach((eventList) => {
+        expect(eventList).to.have.lengthOf(2);
+        eventList.forEach((event) => {
+          expect(event).to.have.property('_id');
+        });
       });
     });
   });
