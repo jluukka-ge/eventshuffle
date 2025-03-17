@@ -78,11 +78,21 @@ const configureMongoDB = (config) => {
 
   const checkHealth = () => _database.stats().then(({ ok }) => ok === 1);
 
+  const clear = async () => {
+    const collections = await _database.listCollections().toArray();
+    return collections.map(
+      ({ name }) =>{
+        return _database.collection(name).drop();
+      }
+    )
+  };
+
   return {
     upsert,
     find,
     close,
     checkHealth,
+    clear,
     db: _database,
   }
 };

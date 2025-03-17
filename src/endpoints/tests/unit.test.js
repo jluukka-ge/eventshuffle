@@ -60,7 +60,7 @@ describe('endpoints', () => {
     const _createEvent = (eventName, dates) => {
       return {
         _id: eventId,
-        eventName,
+        name: eventName,
       };
     };
 
@@ -85,6 +85,45 @@ describe('endpoints', () => {
           done(err);
         }
         expect(res.body).to.deep.equal({ id: eventId });
+        done();
+      });
+  });
+
+  it('responds with a list of event IDs when listing events', (done) => {
+    const events = [
+      {
+        "_id": new ObjectId().toString(),
+        "name": "Jake's secret party"
+      },
+      {
+        "_id": new ObjectId().toString(),
+        "name": "Bowling night"
+      },
+      {
+        "_id": new ObjectId().toString(),
+        "name": "Tabletop gaming"
+      }
+    ];
+
+    const _listEvents = (eventName, dates) => {
+      return events;
+    };
+
+    const app = initApi({
+      domainOperations: {
+        listEvents: _listEvents,
+      }
+    });
+
+    request(app)
+      .get('/api/v1/event/list')
+      .end((err, res) => {
+        if (err) {
+          done(err);
+        }
+        expect(res.body).to.deep.equal(
+          events.map(({ _id: id, name }) => ({ id, name }))
+        );
         done();
       });
   });

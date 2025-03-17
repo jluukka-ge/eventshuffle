@@ -10,4 +10,5 @@
 describe('operations', () => {
   it('calls health check correctly');
   it('creates an event correctly');
+  it('lists events correctly');
 });

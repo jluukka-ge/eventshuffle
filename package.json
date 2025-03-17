@@ -5,7 +5,7 @@
   "main": "src/index.js",
   "scripts": {
     "test": "mocha **/*.test.js",
-    "test:integration": "dotenvx run -- mocha **/*.test.integration.js"
+    "test:integration": "MONGODB_DATABASE=tests dotenvx run -- mocha **/*.test.integration.js"
   },
   "repository": {
     "type": "git",

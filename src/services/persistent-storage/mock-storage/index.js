@@ -40,6 +40,10 @@ const _createEvent = async (db, eventName, dates) => {
   return newEvent;
 };
 
+const _listEvents = async (db) => {
+  return db[EVENT_COLLECTION_NAME];
+};
+
 const _findEventById = async (db, id) => {
   const event = db[EVENT_COLLECTION_NAME].find((event) => event._id === id);
 
@@ -50,6 +54,12 @@ const _findEventById = async (db, id) => {
 
   console.log(`Event entry not found from DB with id: ${event._id}`);
   return null;
+};
+
+const _clear = async (db) => {
+  db[EVENT_COLLECTION_NAME] = [];
+  db[DATE_COLLECTION_NAME] = [];
+  db[VOTE_COLLECTION_NAME] = [];
 };
 
 const defineStorage = (config = {}) => {
@@ -66,7 +76,9 @@ const defineStorage = (config = {}) => {
 
   return {
     createEvent: (eventName, dates) => _createEvent(db, eventName, dates),
+    listEvents: () => _listEvents(db),
     findEventById: (id) => _findEventById(db, id),
+    clear: () => _clear(db),
     close,
     checkHealth,
   };
