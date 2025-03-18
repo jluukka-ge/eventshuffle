@@ -5,6 +5,7 @@ const health = require('./health');
 const createEvent = require('./create-event');
 const listEvents = require('./list-events');
 const addVotes = require('./add-votes');
+const showEvent = require('./show-event');
 
 const initApi = (config) => {
   const {
@@ -20,6 +21,7 @@ const initApi = (config) => {
   createEvent.define(app, domainOperations.createEvent);
   listEvents.define(app, domainOperations.listEvents);
   addVotes.define(app, domainOperations.addVotes);
+  showEvent.define(app, domainOperations.showEvent);
 
   return app;
 };
