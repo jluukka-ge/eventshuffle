@@ -35,7 +35,7 @@ const _createDate = async (db, eventId, date) => {
   };
 
   db[DATE_COLLECTION_NAME].push(newDate);
-  console.log(`Date entry added to DB: ${dateObject._id}`);
+  console.log(`Date entry added to DB: ${newDate._id}`);
 
   return newDate;
 };
@@ -55,6 +55,29 @@ const _findEventById = async (db, id) => {
   console.log(`Event entry not found from DB with id: ${event._id}`);
   return null;
 };
+
+const _findDatesOfEvent = async (db, eventId) => {
+  const dates = db[DATE_COLLECTION_NAME].filter((date) => date.eventId === eventId);
+
+  console.log(`Found ${dates.length} date entries for event with ID ${eventId}`);
+
+  return dates;
+};
+
+const _createVote = async (db, eventId, voter, date) => {
+  const newVote = {
+    _id: nextVoteId(),
+    eventId,
+    date,
+    voter,
+  };
+
+  db[VOTE_COLLECTION_NAME].push(newVote);
+  console.log(`VOTE entry added to DB: ${newVote._id}`);
+
+  return newVote;
+};
+
 
 const _clear = async (db) => {
   db[EVENT_COLLECTION_NAME] = [];
@@ -79,6 +102,8 @@ const defineStorage = (config = {}) => {
     createDate: (eventId, date) => _createDate(db, eventId, date),
     listEvents: () => _listEvents(db),
     findEventById: (id) => _findEventById(db, id),
+    findDatesOfEvent: (eventId) => _findDatesOfEvent(db, eventId),
+    createVote: (eventId, voter, date) => _createVote(db, eventId, voter, date),
     clear: () => _clear(db),
     close,
     checkHealth,

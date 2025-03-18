@@ -1,6 +1,6 @@
 const { configureMongoDB, collections } = require('./mongodb');
 
-const _createEvent = async (dbOps, eventName, dates) => {
+const _createEvent = async (dbOps, eventName) => {
   const newEvent = {
     name: eventName,
   };
@@ -15,8 +15,8 @@ const _createEvent = async (dbOps, eventName, dates) => {
 
 const _createDate = (dbOps, eventId, date) => {
   const newDate = {
-    date: date,
-    eventId: newEvent._id,
+    date,
+    eventId,
   };
 
   const dateUpsert = dbOps.upsert(collections.DATE, newDate);
@@ -45,6 +45,28 @@ const _findEventById = async (dbOps, id) => {
   return null;
 };
 
+const _findDatesOfEvent = async (dbOps, eventId) => {
+  const resultArray = await dbOps.find(collections.DATE, { eventId: { $eq: eventId } });
+  console.log(`Found ${resultArray.length} date entries for event with ID ${eventId}`);
+  return resultArray;
+};
+
+const _createVote = async (dbOps, eventId, voter, date) => {
+  const newVote = {
+    eventId,
+    date,
+    voter,
+  };
+
+  const voteUpsert = dbOps.upsert(collections.VOTE, newVote);
+  voteUpsert.then(() => {
+    console.log(`Vote entry added to DB: ${newVote._id}`);
+  });
+
+  return voteUpsert;
+};
+
+
 const defineStorage = (config) => {
   const dbOps = configureMongoDB(config);
 
@@ -53,6 +75,8 @@ const defineStorage = (config) => {
     createDate: (eventId, date) => _createDate(dbOps, eventId, date),
     listEvents: () => _listEvents(dbOps),
     findEventById: (id) => _findEventById(dbOps, id),
+    findDatesOfEvent: (eventId) => _findDatesOfEvent(dbOps, eventId),
+    createVote: (eventId, voter, date) => _createVote(dbOps, eventId, voter, date),
     checkHealth: dbOps.checkHealth,
     close: dbOps.close,
     clear: dbOps.clear,

@@ -9,9 +9,9 @@ const collections = {
 const replaceOne = async (
   collection,
   filter,
-  replacement,
+  data,
 ) => {
-  const result = await collection.replaceOne(filter, replacement, { upsert: true });
+  const result = await collection.replaceOne(filter, data, { upsert: true });
   return {
     ...data,
     _id: result.upsertedId,
@@ -22,7 +22,7 @@ const insertOne = async (
   collection,
   data,
 ) => {
-  const result = await collection.insertOne(document);
+  const result = await collection.insertOne(data);
   return {
     ...data,
     _id: result.insertedId,
@@ -35,11 +35,11 @@ const upsertOne = async (
 ) => {
   if (rest.length > 1) {
     const filter = rest[0];
-    const replacement = rest[1];
-    return replaceOne(collection, filter, replacement);
+    const data = rest[1];
+    return replaceOne(collection, filter, data);
   }
-  const replacement = rest[0];
-  return insertOne(collection, replacement);
+  const data = rest[0];
+  return insertOne(collection, data);
 };
 
 
