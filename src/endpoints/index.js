@@ -4,6 +4,7 @@ const bodyParser = require('body-parser');
 const health = require('./health');
 const createEvent = require('./create-event');
 const listEvents = require('./list-events');
+const addVotes = require('./add-votes');
 
 const initApi = (config) => {
   const {
@@ -18,6 +19,7 @@ const initApi = (config) => {
   health.define(app, domainOperations.health);
   createEvent.define(app, domainOperations.createEvent);
   listEvents.define(app, domainOperations.listEvents);
+  addVotes.define(app, domainOperations.addVotes);
 
   return app;
 };

@@ -141,9 +141,15 @@ describe('endpoints', () => {
 
     let passedEventId, passedUserName, passedDates;
     const addVotes = (_eventId, _userName, _dates) => {
-      passedEvenId = _eventId;
+      passedEventId = _eventId;
       passedUserName = _userName;
       passedDates = _dates;
+
+      return {
+        event: {},
+        dates: [],
+        votes: [],
+      }
     };
 
     const app = initApi({
@@ -154,6 +160,7 @@ describe('endpoints', () => {
 
     request(app)
       .post(`/api/v1/event/${eventId}/vote`)
+      .send(voteData)
       .end((err, res) => {
         if (err) {
           done(err);
@@ -183,29 +190,19 @@ describe('endpoints', () => {
 
     const addVotes = () => {
       return {
-        event: { id: 0, name: "Jake's secret party" },
+        event: { _id: 0, name: "Jake's secret party" },
         dates: [
-          "2014-01-01",
-          "2014-01-05",
-          "2014-01-12"
+          { date: "2014-01-01", eventId: 0, _id: 0 },
+          { date: "2014-01-05", eventId: 0, _id: 2 },
+          { date: "2014-01-12", eventId: 0, _id: 3 },
         ],
         votes: [
-          {
-            "date": "2014-01-01",
-            "people": [
-              "John",
-              "Julia",
-              "Paul",
-              "Daisy",
-              "Dick"
-            ]
-          },
-          {
-            "date": "2014-01-05",
-            "people": [
-              "Dick"
-            ]
-          }
+          { voter: 'John', date: "2014-01-01", eventId: 0, _id: 0 },
+          { voter: 'Julia', date: "2014-01-01", eventId: 0, _id: 1 },
+          { voter: 'Paul', date: "2014-01-01", eventId: 0, _id: 2 },
+          { voter: 'Daisy', date: "2014-01-01", eventId: 0, _id: 3 },
+          { voter: 'Dick', date: "2014-01-01", eventId: 0, _id: 4 },
+          { voter: 'Dick', date: "2014-01-05", eventId: 0, _id: 5 },
         ]
       };
     };
@@ -218,6 +215,7 @@ describe('endpoints', () => {
 
     request(app)
       .post(`/api/v1/event/${eventId}/vote`)
+      .send(voteData)
       .end((err, res) => {
         if (err) {
           done(err);
