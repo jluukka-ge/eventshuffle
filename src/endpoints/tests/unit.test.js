@@ -128,7 +128,7 @@ describe('endpoints', () => {
       });
   });
 
-  it('passes vote parameters to domain operation correctly', (done) => {
+  it('passes vote parameters to domain operation correctly when adding votes', (done) => {
     const voteData = {
       "name": "Dick",
       "votes": [
@@ -177,7 +177,7 @@ describe('endpoints', () => {
       });
   });
 
-  it('responds with a complete event data structure', (done) => {
+  it('responds with a complete event data structure when adding votes', (done) => {
     const voteData = {
       "name": "Dick",
       "votes": [
