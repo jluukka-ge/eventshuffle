@@ -48,11 +48,11 @@ const _findEventById = async (db, id) => {
   const event = db[EVENT_COLLECTION_NAME].find((event) => event._id === id);
 
   if (!!event) {
-    console.log(`Event entry found from DB with id: ${event._id}`);
+    console.log(`Event entry found from DB with id: ${id}`);
     return event;
   }
 
-  console.log(`Event entry not found from DB with id: ${event._id}`);
+  console.log(`Event entry not found from DB with id: ${id}`);
   return null;
 };
 

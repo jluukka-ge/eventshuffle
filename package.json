@@ -4,6 +4,7 @@
   "description": "Event scheduling service API",
   "main": "src/index.js",
   "scripts": {
+    "start:dev": "MOCK_DB=true node ./src/index.js",
     "test": "mocha **/*.test.js",
     "test:integration": "MONGODB_DATABASE=tests dotenvx run -- mocha **/*.test.integration.js"
   },
