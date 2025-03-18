@@ -51,6 +51,12 @@ const _findDatesOfEvent = async (dbOps, eventId) => {
   return resultArray;
 };
 
+const _findVotesOfEvent = async (dbOps, eventId) => {
+  const resultArray = await dbOps.find(collections.VOTE, { eventId: { $eq: eventId } });
+  console.log(`Found ${resultArray.length} vote entries for event with ID ${eventId}`);
+  return resultArray;
+};
+
 const _createVote = async (dbOps, eventId, voter, date) => {
   const newVote = {
     eventId,
@@ -76,6 +82,7 @@ const defineStorage = (config) => {
     listEvents: () => _listEvents(dbOps),
     findEventById: (id) => _findEventById(dbOps, id),
     findDatesOfEvent: (eventId) => _findDatesOfEvent(dbOps, eventId),
+    findVotesOfEvent: (eventId) => _findVotesOfEvent(dbOps, eventId),
     createVote: (eventId, voter, date) => _createVote(dbOps, eventId, voter, date),
     checkHealth: dbOps.checkHealth,
     close: dbOps.close,

@@ -64,6 +64,14 @@ const _findDatesOfEvent = async (db, eventId) => {
   return dates;
 };
 
+const _findVotesOfEvent = async (db, eventId) => {
+  const votes = db[VOTE_COLLECTION_NAME].filter((vote) => vote.eventId === eventId);
+
+  console.log(`Found ${votes.length} vote entries for event with ID ${eventId}`);
+
+  return votes;
+};
+
 const _createVote = async (db, eventId, voter, date) => {
   const newVote = {
     _id: nextVoteId(),
@@ -73,7 +81,7 @@ const _createVote = async (db, eventId, voter, date) => {
   };
 
   db[VOTE_COLLECTION_NAME].push(newVote);
-  console.log(`VOTE entry added to DB: ${newVote._id}`);
+  console.log(`Vote entry added to DB: ${newVote._id}`);
 
   return newVote;
 };
@@ -103,6 +111,7 @@ const defineStorage = (config = {}) => {
     listEvents: () => _listEvents(db),
     findEventById: (id) => _findEventById(db, id),
     findDatesOfEvent: (eventId) => _findDatesOfEvent(db, eventId),
+    findVotesOfEvent: (eventId) => _findVotesOfEvent(db, eventId),
     createVote: (eventId, voter, date) => _createVote(db, eventId, voter, date),
     clear: () => _clear(db),
     close,

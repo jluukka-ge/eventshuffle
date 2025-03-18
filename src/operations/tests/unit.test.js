@@ -106,4 +106,7 @@ describe('operations', () => {
       done();
     }).catch(done);
   });
+
+  it("returns the event, event's dates and votes from show event -operation");
+
 });

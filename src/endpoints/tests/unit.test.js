@@ -254,4 +254,64 @@ describe('endpoints', () => {
         done();
       });
   });
+
+  it('responds with a complete event data structure when showing an event', (done) => {
+    const eventId = 'event-010';
+
+    const showEvent = () => {
+      return {
+        event: { _id: 0, name: "Jake's secret party" },
+        dates: [
+          { date: "2014-01-01", eventId: 0, _id: 0 },
+          { date: "2014-01-05", eventId: 0, _id: 2 },
+          { date: "2014-01-12", eventId: 0, _id: 3 },
+        ],
+        votes: [
+          { voter: 'John', date: "2014-01-01", eventId: 0, _id: 0 },
+          { voter: 'Julia', date: "2014-01-01", eventId: 0, _id: 1 },
+          { voter: 'Paul', date: "2014-01-01", eventId: 0, _id: 2 },
+          { voter: 'Daisy', date: "2014-01-01", eventId: 0, _id: 3 },
+        ]
+      };
+    };
+
+    const app = initApi({
+      domainOperations: {
+        showEvent,
+      }
+    });
+
+    request(app)
+      .get(`/api/v1/event/${eventId}`)
+      .end((err, res) => {
+        if (err) {
+          done(err);
+        }
+
+        expect(res.body).to.eql(
+          {
+            "id": 0,
+            "name": "Jake's secret party",
+            "dates": [
+              "2014-01-01",
+              "2014-01-05",
+              "2014-01-12"
+            ],
+            "votes": [
+              {
+                "date": "2014-01-01",
+                "people": [
+                  "John",
+                  "Julia",
+                  "Paul",
+                  "Daisy",
+                ]
+              },
+            ]
+          }
+        );
+
+        done();
+      });
+  });
 });

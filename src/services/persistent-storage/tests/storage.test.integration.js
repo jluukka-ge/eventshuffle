@@ -134,6 +134,33 @@ describe('Persistent storage', () => {
       });
     });
 
+    it('finds votes of an event with a common interface', async () => {
+      const mockOps = mockStorage();
+
+      const createdEventMongo = await mongoOps.createEvent('event mongo');
+      const createdEventMock = await mockOps.createEvent('event mock');
+
+      const createdDateMongoA = await mongoOps.createVote(createdEventMongo._id, 'Richard', '2025-03-17');
+      const createdDateMongoB = await mongoOps.createVote(createdEventMongo._id, 'Rick', '2025-03-18');
+
+      const createdDateMockA = await mockOps.createVote(createdEventMock._id, 'Richard', '2025-03-17');
+      const createdDateMockB = await mockOps.createVote(createdEventMock._id, 'Rick', '2025-03-18');
+
+      const resultsMongo = await mongoOps.findVotesOfEvent(createdEventMongo._id);
+      const resultsMock = await mockOps.findVotesOfEvent(createdEventMock._id);
+
+      [
+        resultsMongo,
+        resultsMock,
+      ].forEach((results) => {
+        expect(results).to.have.lengthOf(2);
+        expect(results[0].date).to.equal('2025-03-17');
+        expect(results[1].date).to.equal('2025-03-18');
+        expect(results[0].voter).to.equal('Richard');
+        expect(results[1].voter).to.equal('Rick');
+      });
+    });
+
     it('creates a date with a common interface', async () => {
       const mockOps = mockStorage();
 
