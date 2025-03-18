@@ -127,4 +127,131 @@ describe('endpoints', () => {
         done();
       });
   });
+
+  it('passes vote parameters to domain operation correctly', (done) => {
+    const voteData = {
+      "name": "Dick",
+      "votes": [
+        "2014-01-01",
+        "2014-01-05"
+      ]
+    };
+
+    const eventId = 'event-010';
+
+    let passedEventId, passedUserName, passedDates;
+    const addVotes = (_eventId, _userName, _dates) => {
+      passedEventId = _eventId;
+      passedUserName = _userName;
+      passedDates = _dates;
+
+      return {
+        event: {},
+        dates: [],
+        votes: [],
+      }
+    };
+
+    const app = initApi({
+      domainOperations: {
+        addVotes,
+      }
+    });
+
+    request(app)
+      .post(`/api/v1/event/${eventId}/vote`)
+      .send(voteData)
+      .end((err, res) => {
+        if (err) {
+          done(err);
+        }
+
+        expect(passedEventId).to.equal('event-010');
+        expect(passedUserName).to.equal('Dick');
+        expect(passedDates).to.eql([
+          "2014-01-01",
+          "2014-01-05"
+        ]);
+
+        done();
+      });
+  });
+
+  it('responds with a complete event data structure', (done) => {
+    const voteData = {
+      "name": "Dick",
+      "votes": [
+        "2014-01-01",
+        "2014-01-05"
+      ]
+    };
+
+    const eventId = 'event-010';
+
+    const addVotes = () => {
+      return {
+        event: { _id: 0, name: "Jake's secret party" },
+        dates: [
+          { date: "2014-01-01", eventId: 0, _id: 0 },
+          { date: "2014-01-05", eventId: 0, _id: 2 },
+          { date: "2014-01-12", eventId: 0, _id: 3 },
+        ],
+        votes: [
+          { voter: 'John', date: "2014-01-01", eventId: 0, _id: 0 },
+          { voter: 'Julia', date: "2014-01-01", eventId: 0, _id: 1 },
+          { voter: 'Paul', date: "2014-01-01", eventId: 0, _id: 2 },
+          { voter: 'Daisy', date: "2014-01-01", eventId: 0, _id: 3 },
+          { voter: 'Dick', date: "2014-01-01", eventId: 0, _id: 4 },
+          { voter: 'Dick', date: "2014-01-05", eventId: 0, _id: 5 },
+        ]
+      };
+    };
+
+    const app = initApi({
+      domainOperations: {
+        addVotes,
+      }
+    });
+
+    request(app)
+      .post(`/api/v1/event/${eventId}/vote`)
+      .send(voteData)
+      .end((err, res) => {
+        if (err) {
+          done(err);
+        }
+
+        expect(res.body).to.eql(
+          {
+            "id": 0,
+            "name": "Jake's secret party",
+            "dates": [
+              "2014-01-01",
+              "2014-01-05",
+              "2014-01-12"
+            ],
+            "votes": [
+              {
+                "date": "2014-01-01",
+                "people": [
+                  "John",
+                  "Julia",
+                  "Paul",
+                  "Daisy",
+                  "Dick"
+                ]
+              },
+              {
+                "date": "2014-01-05",
+                "people": [
+                  "Dick"
+                ]
+              }
+            ]
+          }
+        );
+
+        done();
+      });
+  });
 });

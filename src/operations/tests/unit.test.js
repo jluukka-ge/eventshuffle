@@ -12,6 +12,7 @@ const request = require('supertest');
 const chai = import('chai');
 
 const { define: defineCreateEvent } = require('../create-event');
+const { define: defineAddVotes } = require('../add-votes');
 
 let expect;
 
@@ -53,5 +54,56 @@ describe('operations', () => {
         done();
       }
     ).catch(done);
+  });
+
+  it("returns the event, event's dates and votes from add votes -operation", (done) => {
+    const addVotes = defineAddVotes({
+      persistentStorage: {
+        findEventById: async (eventId) => {
+          return {
+            _id: 'e:010',
+            name: 'event-010'
+          };
+        },
+        findDatesOfEvent: async (eventId) => {
+          return [
+            { eventId: 'e:010', date: '2025-03-17', _id: 'd:001' },
+            { eventId: 'e:010', date: '2025-03-18', _id: 'd:002' },
+          ];
+        },
+        createVote: async (eventId, voter, date) => {
+          return {
+            _id: 'v:000',
+            eventId,
+            date,
+            voter,
+          };
+        },
+      }
+    });
+
+    addVotes(
+      'e:010',
+      'Richard',
+      ['2025-03-17', '2025-03-18']
+    ).then(result => {
+
+      expect(result.event).to.eql({
+        _id: 'e:010',
+        name: 'event-010'
+      });
+
+      expect(result.dates).to.eql([
+        { eventId: 'e:010', date: '2025-03-17', _id: 'd:001' },
+        { eventId: 'e:010', date: '2025-03-18', _id: 'd:002' },
+      ]);
+
+      expect(result.votes).to.eql([
+        { eventId: 'e:010', date: '2025-03-17', _id: 'v:000', voter: 'Richard' },
+        { eventId: 'e:010', date: '2025-03-18', _id: 'v:000', voter: 'Richard' },
+      ]);
+
+      done();
+    }).catch(done);
   });
 });

@@ -53,8 +53,8 @@ describe('Persistent storage', () => {
     it('creates event objects with common structure', async () => {
       const mockOps = mockStorage();
 
-      const createdMongo = await mongoOps.createEvent('event mongo', ['2025-03-10', '2025-03-11']);
-      const createdMock = await mockOps.createEvent('event mock', ['2025-03-10', '2025-03-11']);
+      const createdMongo = await mongoOps.createEvent('event mongo');
+      const createdMock = await mockOps.createEvent('event mock');
 
       // Test both objects
       [
@@ -108,5 +108,66 @@ describe('Persistent storage', () => {
         });
       });
     });
+
+    it('finds dates of an event with a common interface', async () => {
+      const mockOps = mockStorage();
+
+      const createdEventMongo = await mongoOps.createEvent('event mongo');
+      const createdEventMock = await mockOps.createEvent('event mock');
+
+      const createdDateMongoA = await mongoOps.createDate(createdEventMongo._id, '2025-03-17');
+      const createdDateMongoB = await mongoOps.createDate(createdEventMongo._id, '2025-03-18');
+
+      const createdDateMockA = await mockOps.createDate(createdEventMock._id, '2025-03-17');
+      const createdDateMockB = await mockOps.createDate(createdEventMock._id, '2025-03-18');
+
+      const resultsMongo = await mongoOps.findDatesOfEvent(createdEventMongo._id);
+      const resultsMock = await mockOps.findDatesOfEvent(createdEventMock._id);
+
+      [
+        resultsMongo,
+        resultsMock,
+      ].forEach((results) => {
+        expect(results).to.have.lengthOf(2);
+        expect(results[0].date).to.equal('2025-03-17');
+        expect(results[1].date).to.equal('2025-03-18');
+      });
+    });
+
+    it('creates a date with a common interface', async () => {
+      const mockOps = mockStorage();
+
+      const createdMongo = await mongoOps.createDate('e:01', '2025-07-17');
+      const createdMock = await mockOps.createDate('e:01', '2025-07-17');
+
+      // Test both objects
+      [
+        createdMongo,
+        createdMock,
+      ].forEach((createdObject) => {
+        expect(createdObject).to.have.property('_id');
+        expect(createdObject).to.have.property('eventId');
+        expect(createdObject).to.have.property('date');
+      });
+    });
+
+    it('creates a vote with a common interface', async () => {
+      const mockOps = mockStorage();
+
+      const createdMongo = await mongoOps.createVote('e:01', 'Richard', '2025-07-17');
+      const createdMock = await mockOps.createVote('e:01', 'Richard', '2025-07-17');
+
+      // Test both objects
+      [
+        createdMongo,
+        createdMock,
+      ].forEach((createdObject) => {
+        expect(createdObject).to.have.property('_id');
+        expect(createdObject).to.have.property('eventId');
+        expect(createdObject).to.have.property('date');
+        expect(createdObject).to.have.property('voter');
+      });
+    });
+
   });
 });
