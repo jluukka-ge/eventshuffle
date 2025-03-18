@@ -127,4 +127,133 @@ describe('endpoints', () => {
         done();
       });
   });
+
+  it('passes vote parameters to domain operation correctly', (done) => {
+    const voteData = {
+      "name": "Dick",
+      "votes": [
+        "2014-01-01",
+        "2014-01-05"
+      ]
+    };
+
+    const eventId = 'event-010';
+
+    let passedEventId, passedUserName, passedDates;
+    const addVotes = (_eventId, _userName, _dates) => {
+      passedEvenId = _eventId;
+      passedUserName = _userName;
+      passedDates = _dates;
+    };
+
+    const app = initApi({
+      domainOperations: {
+        addVotes,
+      }
+    });
+
+    request(app)
+      .post(`/api/v1/event/${eventId}/vote`)
+      .end((err, res) => {
+        if (err) {
+          done(err);
+        }
+
+        expect(passedEventId).to.equal('event-010');
+        expect(passedUserName).to.equal('Dick');
+        expect(passedDates).to.eql([
+          "2014-01-01",
+          "2014-01-05"
+        ]);
+
+        done();
+      });
+  });
+
+  it('responds with a complete event data structure', (done) => {
+    const voteData = {
+      "name": "Dick",
+      "votes": [
+        "2014-01-01",
+        "2014-01-05"
+      ]
+    };
+
+    const eventId = 'event-010';
+
+    const addVotes = () => {
+      return {
+        event: { id: 0, name: "Jake's secret party" },
+        dates: [
+          "2014-01-01",
+          "2014-01-05",
+          "2014-01-12"
+        ],
+        votes: [
+          {
+            "date": "2014-01-01",
+            "people": [
+              "John",
+              "Julia",
+              "Paul",
+              "Daisy",
+              "Dick"
+            ]
+          },
+          {
+            "date": "2014-01-05",
+            "people": [
+              "Dick"
+            ]
+          }
+        ]
+      };
+    };
+
+    const app = initApi({
+      domainOperations: {
+        addVotes,
+      }
+    });
+
+    request(app)
+      .post(`/api/v1/event/${eventId}/vote`)
+      .end((err, res) => {
+        if (err) {
+          done(err);
+        }
+
+        expect(res.body).to.eql(
+          {
+            "id": 0,
+            "name": "Jake's secret party",
+            "dates": [
+              "2014-01-01",
+              "2014-01-05",
+              "2014-01-12"
+            ],
+            "votes": [
+              {
+                "date": "2014-01-01",
+                "people": [
+                  "John",
+                  "Julia",
+                  "Paul",
+                  "Daisy",
+                  "Dick"
+                ]
+              },
+              {
+                "date": "2014-01-05",
+                "people": [
+                  "Dick"
+                ]
+              }
+            ]
+          }
+        );
+
+        done();
+      });
+  });
 });
