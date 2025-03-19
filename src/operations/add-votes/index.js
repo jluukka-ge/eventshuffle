@@ -3,7 +3,7 @@ const define = ({ persistentStorage }) => {
     const event = await persistentStorage.findEventById(eventId);
 
     if (!event) {
-      throw new Exception({ status: 404, message: 'Event not found' });
+      throw new Error({ status: 404, message: 'Event not found' });
     }
 
     const dates = await persistentStorage.findDatesOfEvent(eventId);
