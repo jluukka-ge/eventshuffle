@@ -80,6 +80,22 @@ describe('operations', () => {
             voter,
           };
         },
+        findVotesOfEvent: async (eventId) => {
+          return [
+            {
+              _id: 'v:000',
+              eventId,
+              date: '2025-03-17',
+              voter: 'Richard',
+            },
+            {
+              _id: 'v:000',
+              eventId,
+              date: '2025-03-18',
+              voter: 'Richard',
+            },
+          ];
+        },
       }
     });
 

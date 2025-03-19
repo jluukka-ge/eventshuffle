@@ -1,24 +1,9 @@
-const transformEvent = (event) => ({
-  id: event._id,
-  name: event.name,
-});
+const {
+  transformEvent,
+  transformDate,
+  transformVotes,
+} = require('../utils');
 
-const transformDate = (date) => date.date;
-
-const transformVotes = (votes, dates) => {
-  // Group by dates
-  return dates
-    .map(date => {
-      const people = votes
-        .filter(vote => vote.date === date.date)
-        .map(vote => vote.voter);
-      return {
-        date: transformDate(date),
-        people,
-      };
-    })
-    .filter(({ people }) => people.length > 0);
-};
 
 const define = (app, addVotes) => {
   app.post('/api/v1/event/:eventId/vote', async (req, res) => {

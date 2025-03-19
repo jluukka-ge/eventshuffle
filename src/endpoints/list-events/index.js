@@ -1,7 +1,8 @@
-const _transformEvent = (event) => ({
-  id: event._id,
-  name: event.name,
-});
+const {
+  transformEvent,
+  transformDate,
+  transformVotes,
+} = require('../utils');
 
 const define = (app, listEvents) => {
   app.get('/api/v1/event/list', async (req, res) => {
@@ -9,7 +10,7 @@ const define = (app, listEvents) => {
       const events = await listEvents();
 
       return res.json({
-        events: events.map(_transformEvent),
+        events: events.map(transformEvent),
       });
     } catch(err) {
       console.error(err);
