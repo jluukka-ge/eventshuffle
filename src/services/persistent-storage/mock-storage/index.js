@@ -9,7 +9,7 @@ const autoIncrementNextId = (() => {
   return () => id++;
 });
 
-const objectIdNextId = () => () => new ObjectId();
+const objectIdNextId = () => () => new ObjectId().toString();
 
 const nextEventId = objectIdNextId();
 const nextDateId = objectIdNextId();

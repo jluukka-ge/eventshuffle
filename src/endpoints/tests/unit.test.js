@@ -121,7 +121,8 @@ describe('endpoints', () => {
         if (err) {
           done(err);
         }
-        expect(res.body).to.deep.equal(
+
+        expect(res.body.events).to.deep.equal(
           events.map(({ _id: id, name }) => ({ id, name }))
         );
         done();
@@ -313,5 +314,54 @@ describe('endpoints', () => {
 
         done();
       });
+  });
+
+  it('responds with event data and suitable dates', (done) => {
+
+    const showResults = async (eventId) => {
+      return {
+        event: { _id: eventId, name: "Jake's secret party"},
+        dates: [
+          { date: "2014-01-01", eventId: eventId, _id: 0 },
+        ],
+        votes: [
+          { voter: 'John', date: "2014-01-01", eventId: eventId, _id: 0 },
+          { voter: 'Julia', date: "2014-01-01", eventId: eventId, _id: 1 },
+          { voter: 'Paul', date: "2014-01-01", eventId: eventId, _id: 2 },
+          { voter: 'Daisy', date: "2014-01-01", eventId: eventId, _id: 3 },
+          { voter: 'Dick', date: "2014-01-01", eventId: eventId, _id: 3 },
+        ]
+      };
+    };
+
+    const eventId = 'event-010';
+    const app = initApi({
+      domainOperations: {
+        showResults,
+      }
+    });
+
+    request(app)
+      .get(`/api/v1/event/${eventId}/results`)
+      .end((err, res) => {
+        if (err) {
+          done(err);
+        }
+
+        expect(res.body.id).to.equal('event-010');
+        expect(res.body.name).to.equal("Jake's secret party");
+        expect(res.body.suitableDates).to.have.lengthOf(1);
+        expect(res.body.suitableDates[0].date).to.equal('2014-01-01');
+        expect(res.body.suitableDates[0].people).to.have.members([
+          "John",
+          "Julia",
+          "Paul",
+          "Daisy",
+          "Dick",
+        ]);
+
+        done();
+      });
+
   });
 });
