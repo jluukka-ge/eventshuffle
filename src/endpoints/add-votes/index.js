@@ -1,24 +1,11 @@
-const transformEvent = (event) => ({
-  id: event._id,
-  name: event.name,
-});
+const {
+  EVENT_NOT_FOUND_ERROR,
 
-const transformDate = (date) => date.date;
+  transformEvent,
+  transformDate,
+  transformVotes,
+} = require('../utils');
 
-const transformVotes = (votes, dates) => {
-  // Group by dates
-  return dates
-    .map(date => {
-      const people = votes
-        .filter(vote => vote.date === date.date)
-        .map(vote => vote.voter);
-      return {
-        date: transformDate(date),
-        people,
-      };
-    })
-    .filter(({ people }) => people.length > 0);
-};
 
 const define = (app, addVotes) => {
   app.post('/api/v1/event/:eventId/vote', async (req, res) => {
@@ -27,6 +14,10 @@ const define = (app, addVotes) => {
       const { name, votes } = req.body;
 
       const addVotesResult = await addVotes(eventId, name, votes);
+
+      if (addVotesResult === null) {
+        throw EVENT_NOT_FOUND_ERROR;
+      }
 
       return res.json({
         ...transformEvent(addVotesResult.event),
@@ -37,8 +28,13 @@ const define = (app, addVotes) => {
         ),
       });
     } catch(err) {
-      console.error(err);
-      return res.status(500).send();
+      switch (err) {
+        case EVENT_NOT_FOUND_ERROR:
+          return res.status(404).send('Event not found');
+        default:
+          console.error(err);
+          return res.status(500).send();
+      }
     }
   });
 };

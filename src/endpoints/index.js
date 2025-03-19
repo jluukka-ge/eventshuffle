@@ -1,4 +1,5 @@
 const express = require('express');
+const helmet = require('helmet');
 const bodyParser = require('body-parser');
 
 const health = require('./health');
@@ -14,6 +15,7 @@ const initApi = (config) => {
   } = config;
 
   const app = express();
+  app.use(helmet());
 
   // parse application/json
   app.use(bodyParser.json())
