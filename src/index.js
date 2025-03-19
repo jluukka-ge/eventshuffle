@@ -1,5 +1,7 @@
 const { defineServices, defineApp } = require('./app');
 
+const { PORT } = process.env;
+
 const services = defineServices(process.env);
 const app = defineApp(services);
 

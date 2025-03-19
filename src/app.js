@@ -10,7 +10,6 @@ const defineServices = (config) => {
     MOCK_DB = 'false',
     MONGODB_CONN_STR = '',
     MONGODB_DATABASE = '',
-    PORT = '3000',
   } = config;
 
   const persistentStorage = MOCK_DB === 'false' ? (

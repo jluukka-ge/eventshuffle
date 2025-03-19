@@ -3,7 +3,7 @@ const define = ({ persistentStorage }) => {
     const newEvent = await persistentStorage.createEvent(eventName);
 
     const newDates = dates.map(date => {
-      return persistentStorage.createDate(newEvent._id, date)
+      return persistentStorage.createDate(newEvent._id.toString(), date)
     });
 
     return Promise.all([

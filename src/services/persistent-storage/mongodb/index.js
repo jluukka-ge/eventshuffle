@@ -1,3 +1,4 @@
+const { ObjectId } = require('bson');
 const { configureMongoDB, collections } = require('./mongodb');
 
 const _createEvent = async (dbOps, eventName) => {
@@ -34,7 +35,7 @@ const _listEvents = async (dbOps) => {
 };
 
 const _findEventById = async (dbOps, id) => {
-  const resultArray = await dbOps.find(collections.EVENT, { _id: { $eq: id } });
+  const resultArray = await dbOps.find(collections.EVENT, { _id: new ObjectId(id) });
 
   if (resultArray.length > 0) {
     console.log(`Event entry found from DB with id: ${id}`);
