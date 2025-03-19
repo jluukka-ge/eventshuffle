@@ -8,9 +8,9 @@ const define = (app, listEvents) => {
     try {
       const events = await listEvents();
 
-      return res.json(
-        events.map(_transformEvent)
-      );
+      return res.json({
+        events: events.map(_transformEvent),
+      });
     } catch(err) {
       console.error(err);
       return res.status(500).send();

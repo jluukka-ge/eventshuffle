@@ -121,7 +121,8 @@ describe('endpoints', () => {
         if (err) {
           done(err);
         }
-        expect(res.body).to.deep.equal(
+
+        expect(res.body.events).to.deep.equal(
           events.map(({ _id: id, name }) => ({ id, name }))
         );
         done();

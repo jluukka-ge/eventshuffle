@@ -8,7 +8,6 @@
  */
 
 const { ObjectId } = require('bson');
-const request = require('supertest');
 const chai = import('chai');
 
 const { define: defineCreateEvent } = require('../create-event');

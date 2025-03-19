@@ -8,7 +8,7 @@ const define = ({ persistentStorage }) => {
 
     const dates = await persistentStorage.findDatesOfEvent(eventId);
 
-    const newVotes = votes
+    const newVotes = await votes
       .filter(voteDate => dates.some(date => date.date === voteDate))
       .map(voteDate => {
         return persistentStorage.createVote(
@@ -18,15 +18,13 @@ const define = ({ persistentStorage }) => {
         )
       });
 
-    return Promise.all([
-      ...newVotes,
-    ]).then((newVoteResults) => {
-      return {
-        event,
-        dates,
-        votes: newVoteResults,
-      };
-    });
+    const allVotes = await persistentStorage.findVotesOfEvent(eventId);
+
+    return {
+      event,
+      dates,
+      votes: allVotes,
+    };
   };
 };
 
