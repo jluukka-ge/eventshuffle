@@ -13,6 +13,7 @@ __See './scripts' for common development and maintenance actions__
 - `./src/endpoints`   -- public API setup
 - `./src/operations`  -- domain logic functions
 - `./src/services`    -- external services
+- `./tests`           -- top level (specification) test cases
 
 
 ## About code architecture
